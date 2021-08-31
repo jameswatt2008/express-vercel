@@ -7,11 +7,7 @@ const express = require('express');
 let db = require('../db/db');
 let Chat = db.Chat;//表
 
-app.get('/', function (req, res) {
-	res.sendFile(__dirname + '/index.html');
-});
 
-app.use(express.static('./public'));
 
 
 var usocket = {}, user = [];//user用户id，usocket用户socket
@@ -113,7 +109,8 @@ io.on('connection', function (socket) {//连接
 });
 
 
-http.listen(3001, function () {
+const port = process.env.PORT || 5000
+http.listen(port, function () {
 	console.log('socket.IO  *3001 开始监听');
 });
 
