@@ -3,14 +3,9 @@ var http = require('http').Server(app);
 var io = require('socket.io')(http);
 
 const express = require('express');
-
 //引入db
-let db = require('../db/db');
+let db = require('./db/db');
 let Chat = db.Chat;//表
-
-
-
-
 var usocket = {}, user = [];//user用户id，usocket用户socket
 io.on('connection', function (socket) {//连接
     socket.on('new_user', (userid) => {//登录
@@ -109,7 +104,6 @@ io.on('connection', function (socket) {//连接
     })
 });
 
-
 // const port = process.env.PORT || 5000
 // http.listen(port, function () {
 //     console.log('socket.IO  *3001 开始监听');
@@ -117,5 +111,5 @@ io.on('connection', function (socket) {//连接
 
 // var router = express.Router();
 
-module.exports = http;
+module.exports = app;
 
