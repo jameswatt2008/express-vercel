@@ -104,10 +104,10 @@ io.on('connection', function (socket) {//连接
     })
 });
 
-// const port = process.env.PORT || 5000
-// http.listen(port, function () {
-//     console.log('socket.IO  *3001 开始监听');
-// });
+const port = process.env.PORT || 5000
+http.listen(port, function () {
+    console.log('socket.IO  *3001 开始监听');
+});
 
 // var router = express.Router();
 
