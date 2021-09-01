@@ -1,115 +1,98 @@
-var app = require('express')();
-var http = require('http').Server(app);
-var io = require('socket.io')(http);
+// var app = require('express')();
+// var http = require('http').createServer(app);
+// var io = require('socket.io')(http);
+
+// const { log } = require('console');
+// const express = require('express');
 
 const express = require('express');
+const app = express();
+const path = require('path');
+const server = require('http').createServer(app);
+const io = require('socket.io')(server);
+const port = process.env.PORT || 3001;
+// const port = process.env.PORT || 3001
+const host = process.env.HOST || ''
+
+server.listen(port, () => {
+    console.log('Server listening at port %d', port);
+});
+
+// Routing
+app.use(express.static(path.join(__dirname, 'public')));
+
 //引入db
-let db = require('./db/db');
-let Chat = db.Chat;//表
+// let db = require('./db/db');
+// let Chat = db.Chat;//表
 var usocket = {}, user = [];//user用户id，usocket用户socket
 io.on('connection', function (socket) {//连接
+
+    console.log('链接')
+
+    socket.on('new message', (data) => {
+        console.log('new message', data);
+        // we tell the client to execute 'new message'
+        socket.broadcast.emit('new message');
+    });
+
+    socket.on('add user', (username) => {
+        console.log('add user');
+
+        socket.emit('login');
+
+    });
+
+
+
     socket.on('new_user', (userid) => {//登录
+        console.log('new user');
         if (!(userid in usocket)) {
-            socket.userid = userid;
-            usocket[userid] = socket;
-            user.push(userid);
-            console.log('连接' + userid);
-            socket.emit('login', user);//获取在线人
-            socket.broadcast.emit('user_joined', userid, (user.length - 1));//回调
-            console.log('用户表' + user);
+            // socket.userid = userid;
+            // usocket[userid] = socket;
+            // user.push(userid);
+            // console.log('连接' + userid);
+            // socket.emit('login', user);//获取在线人
+            // socket.broadcast.emit('user_joined', userid, (user.length - 1));//回调
+            // console.log('用户表' + user);
         }
     });
 
 
 
     socket.on('send_private_message', function (res) {//私聊   存记录 判断indexof
-        let from = res.from;
-        let fname = res.fname;
-        let ftx = res.ftx;
-        let to = res.to;
-        let tname = res.tname;
-        let ttx = res.ttx;
-        if (user.indexOf(res.to) > -1) {//如果在线用户
-            usocket[res.to].emit('receive_private_message', res);//发送
-            let body = {
-                text: res.body,
-                status: 0,//已读
-                img: res.img,
-                sender: res.from,
-                ttime: res.time,
-            };
-            let json1 = { from, fname, ftx, to, tname, ttx, body };
-            let chat = new Chat(json1);
-            Chat.findOne({ $or: [{ from: from, to: to }, { from: to, to: from }] }, function (err, doc) {
-                if (doc) {
-                    let resultFrom = doc.from;
-                    let resultTo = doc.to;
-                    Chat.updateOne({ from: resultFrom, to: resultTo }, { $push: { body: body } }, function (err) {
-                        console.log('插入一条聊天记录');
-                        if (err) throw err;
-                    })
-                }
-                else {
-                    chat.save((err, chat) => {
-                        if (err) throw err;
-                    });
-                }
-            });
-        }
-        else {
-            let body = {
-                text: res.body,
-                status: 1,//未读
-                img: res.img,
-                sender: res.from,
-                ttime: res.time,
-            };
-            let json1 = { from, fname, ftx, to, tname, ttx, body };
-            let chat = new Chat(json1);
-            Chat.findOne({ $or: [{ from: from, to: to }, { from: to, to: from }] }, function (err, doc) {
-                if (doc) {
-                    let resultFrom = doc.from;
-                    let resultTo = doc.to;
-                    Chat.updateOne({ from: resultFrom, to: resultTo }, { $push: { body: body } }, function (err) {
-                        console.log('插入一条聊天记录');
-                        if (err) throw err;
-                    })
-                }
-                else {
-                    chat.save((err, chat) => {
-                        if (err) throw err;
-                    });
-                }
-            });
-        }
+        console.log('send_private_message');
+        socket.broadcast.emit('new message');
+        socket.broadcast.emit('send_private_message');
+
+
+
     });
 
 
 
     socket.on('chatmessage', function (msg) {//发广播信息
-        id = socket.id;
-        io.emit('chatmessage', { msg, id });
+        console.log('chatmessage')
+        socket.broadcast.emit('chatmessage');
+
+        // id = socket.id;
+        // io.emit('chatmessage', { msg, id });
         // console.log('message: ' + msg + socket.id);
     });
 
 
     socket.on('disconnect', function () {
-        //移除
-        if (socket.userid in usocket) {
-            delete (usocket[socket.userid]);
-            user.splice(user.indexOf(socket.userid), 1);
-        }
-        console.log('断开' + socket.userid);
-        socket.broadcast.emit('user_left', socket.userid)
+        console.log('disconnect');
     })
 });
 
-const port = process.env.PORT || 5000
-http.listen(port, function () {
-    console.log('socket.IO  *3001 开始监听');
-});
 
-// var router = express.Router();
+
+
+
+
+
+
+
 
 module.exports = app;
 
