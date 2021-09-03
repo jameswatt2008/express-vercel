@@ -27,7 +27,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 var usocket = {}, user = [];//user用户id，usocket用户socket
 io.on('connection', function (socket) {//连接
 
-    console.log('链接9999888', socket)
+    console.log('链接9999888887777', socket)
 
     socket.on('new message', (data) => {
         console.log('new message', data);
