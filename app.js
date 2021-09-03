@@ -14,7 +14,7 @@ const port = process.env.PORT || 3001;
 // const port = process.env.PORT || 3001
 const host = process.env.HOST || ''
 
-server.listen(3001, () => {
+server.listen(port, () => {
     console.log('Server listening at port %d', port);
 });
 
@@ -28,7 +28,6 @@ var usocket = {}, user = [];//user用户id，usocket用户socket
 io.on('connection', function (socket) {//连接
 
     console.log('链接9999888887777', socket)
-    socket.broadcast.emit('new message');
 
 
     socket.on('new message', (data) => {
