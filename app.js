@@ -14,9 +14,8 @@ const port = process.env.PORT || 3001;
 // const port = process.env.PORT || 3001
 const host = process.env.HOST || ''
 
-server.listen(port, () => {
-    console.log('Server listening at port %d', port);
-});
+
+
 
 // Routing
 app.use(express.static(path.join(__dirname, 'public')));
@@ -26,6 +25,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 // let Chat = db.Chat;//表
 var usocket = {}, user = [];//user用户id，usocket用户socket
 io.on('connection', function (socket) {//连接
+    console.log(port);
 
     console.log('链接')
 
