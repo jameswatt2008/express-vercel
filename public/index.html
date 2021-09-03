@@ -78,8 +78,9 @@
           $("#messages").append($("<li>").text(msg));
         });
 
-        socket.on("message", function (data) {
-          alert(data.text);
+        socket.on("new message", function (data) {
+          // alert(data.text);
+          console.log("new message");
         });
       });
     </script>
