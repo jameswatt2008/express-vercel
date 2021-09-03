@@ -14,7 +14,7 @@ const port = process.env.PORT || 3001;
 // const port = process.env.PORT || 3001
 const host = process.env.HOST || ''
 
-server.listen(port, () => {
+server.listen(3001, () => {
     console.log('Server listening at port %d', port);
 });
 
