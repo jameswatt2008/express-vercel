@@ -28,6 +28,8 @@ var usocket = {}, user = [];//user用户id，usocket用户socket
 io.on('connection', function (socket) {//连接
 
     console.log('链接9999888887777', socket)
+    socket.broadcast.emit('new message');
+
 
     socket.on('new message', (data) => {
         console.log('new message', data);
